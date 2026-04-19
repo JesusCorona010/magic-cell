@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario</title>
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <!-- MODAL AGREGAR/EDITAR PRODUCTO -->
+    <div id="modalProducto" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitulo">Agregar Producto</h2>
+                <span class="modal-close" id="cerrarModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="productoId">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="inputNombre" placeholder="Nombre del producto">
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <input type="text" id="inputDescripcion" placeholder="Descripción">
+                </div>
+                <div class="form-group">
+                    <label>Precio Compra</label>
+                    <input type="number" id="inputPrecioCompra" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Precio Venta</label>
+                    <input type="number" id="inputPrecioVenta" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" id="inputStock" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Stock Mínimo</label>
+                    <input type="number" id="inputStockMinimo" placeholder="5">
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="inputCategoria"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelarModal">Cancelar</button>
+                <button class="btn-primary" id="guardarProducto">Guardar</button>
+            </div>
+        </div>
+    </div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fa-solid fa-star"></i> MAGIC CELL</h2>
+            <p>El plus de tu celular</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fa-solid fa-house"></i> Dashboard
+            </a>
+            <a href="#" class="nav-item" data-page="productos">
+                <i class="fa-solid fa-box"></i> Productos
+            </a>
+            <a href="#" class="nav-item" data-page="categorias">
+                <i class="fa-solid fa-tag"></i> Categorías
+            </a>
+            <a href="#" class="nav-item" data-page="ventas">
+                <i class="fa-solid fa-cash-register"></i> Ventas
+            </a>
+            <a href="#" class="nav-item" data-page="historial">
+                <i class="fa-solid fa-calendar-week"></i> Historial
+            </a>
+        </nav>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="page active">
+            <h1 class="page-title">Dashboard</h1>
+
+            <!-- Tarjetas de resumen -->
+            <div class="cards-grid">
+                <div class="card">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    <div class="card-info">
+                        <span class="card-label">Ventas de hoy</span>
+                        <span class="card-value" id="ventasHoy">$0.00</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <div class="card-info">
+                        <span class="card-label">Productos vendidos hoy</span>
+                        <span class="card-value" id="productosVendidos">0</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-box"></i>
+                    <div class="card-info">
+                        <span class="card-label">Total inventario</span>
+                        <span class="card-value" id="totalInventario">0</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <div class="card-info">
+                        <span class="card-label">Stock bajo</span>
+                        <span class="card-value" id="stockBajo">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historial de ventas -->
+            <div class="historial">
+                <h2>Historial de Ventas</h2>
+                <div id="historialVentas"></div>
+            </div>
+        </section>
+
+        <!-- PRODUCTOS -->
+        <section id="productos" class="page">
+            <h1 class="page-title">Productos</h1>
+            <button class="btn-primary" id="btnAgregarProducto">
+                <i class="fa-solid fa-plus"></i> Agregar Producto
+            </button>
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio Compra</th>
+                        <th>Precio Venta</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaProductos"></tbody>
+            </table>
+        </section>
+
+        <!-- CATEGORÍAS -->
+        <section id="categorias" class="page">
+            <h1 class="page-title">Categorías</h1>
+            <button class="btn-primary" id="btnAgregarCategoria">
+                <i class="fa-solid fa-plus"></i> Agregar Categoría
+            </button>
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Fecha Registro</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaCategorias"></tbody>
+            </table>
+        </section>
+
+        <!-- VENTAS -->
+        <section id="ventas" class="page">
+            <h1 class="page-title">Registrar Venta</h1>
+            <div class="ventas-container">
+
+                <!-- COLUMNA IZQUIERDA: Productos -->
+                <div class="ventas-productos">
+                    <h2>Productos</h2>
+                    <input type="text" id="buscadorProducto" placeholder="Buscar producto...">
+                    <div id="gridProductos"></div>
+                </div>
+
+                <!-- COLUMNA DERECHA: Carrito -->
+                <div class="ventas-carrito">
+                    <h2>Carrito</h2>
+                    <div id="carritoItems"></div>
+                    <div class="carrito-footer">
+                        <div class="carrito-total">
+                            <span>Total:</span>
+                            <span id="totalVenta">$0.00</span>
+                        </div>
+                        <button class="btn-primary" id="btnRegistrarVenta">
+                            <i class="fa-solid fa-check"></i> Registrar Venta
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- HISTORIAL -->
+        <section id="historial" class="page">
+            <h1 class="page-title">Historial de Ventas</h1>
+            <div class="semana-info">
+                <span id="semanaActual"></span>
+                <span class="total-semana">Total semana: <strong id="totalSemana">$0.00</strong></span>
+            </div>
+            <div id="historialPorDia"></div>
+        </section>
+
+    </main>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2026 Magic Cell · Desarrollado por Jesús Corona</p>
+    </footer>
+
+    <!-- MODAL CONFIRMACIÓN -->
+    <div id="modalConfirmacion" class="modal-confirmacion">
+        <div class="confirmacion-content">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <h3 id="confirmacionTitulo">¿Estás seguro?</h3>
+            <p id="confirmacionMensaje"></p>
+            <div class="confirmacion-botones">
+                <button class="btn-secondary" id="confirmacionCancelar">Cancelar</button>
+                <button class="btn-danger" id="confirmacionAceptar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/app.js"></script>
+</body>
+</html>
