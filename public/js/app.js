@@ -131,20 +131,27 @@ async function cargarDashboard() {
             return;
         }
 
-        const ventasAgrupadas = {};
-        ventas.forEach(v => {
-            if(!ventasAgrupadas[v.id]) {
-                ventasAgrupadas[v.id] = {
+        const ventasHoyAgrupadas = {};
+        ventasHoy.forEach(v => {
+            if(!ventasHoyAgrupadas[v.id]) {
+                ventasHoyAgrupadas[v.id] = {
                     id: v.id,
                     total: v.total,
                     fecha: v.fecha_venta,
+                    metodoPago: v.metodo_pago,
                     productos: []
                 };
             }
-            ventasAgrupadas[v.id].productos.push(`${v.producto} x${v.cantidad}`);
+            ventasHoyAgrupadas[v.id].productos.push(`${v.producto} x${v.cantidad}`);
         });
 
-        Object.values(ventasAgrupadas).forEach(v => {
+        // Si no hay ventas en el dia
+        if(Object.keys(ventasHoyAgrupadas).length === 0) {
+            historial.innerHTML = '<p style="color: var(--text-light)">No hay ventas hoy</p>';
+            return;
+        }
+
+        Object.values(ventasHoyAgrupadas).forEach(v => {
             const div = document.createElement('div');
             div.classList.add('venta-item');
             div.innerHTML = `
@@ -152,7 +159,10 @@ async function cargarDashboard() {
                     <span>Venta #${v.id}</span>
                     <span>$${parseFloat(v.total).toFixed(2)}</span>
                 </div>
-                <div class="venta-item-fecha">${new Date(v.fecha).toLocaleString()}</div>
+                <div class="venta-item-fecha">
+                    ${new Date(v.fecha).toLocaleString()} · 
+                    <span>${v.metodoPago === 'tarjeta' ? '💳 Tarjeta' : '💵 Efectivo'}</span>
+                </div>
                 <div class="venta-item-detalle">${v.productos.join(', ')}</div>
             `;
             historial.appendChild(div);
@@ -341,6 +351,15 @@ async function eliminarProducto(id) {
 
 // CATEGORÍAS
 
+// CATEGORÍAS
+
+const modalCategoria = document.getElementById('modalCategoria');
+const cerrarModalCategoria = document.getElementById('cerrarModalCategoria');
+const cancelarModalCategoria = document.getElementById('cancelarModalCategoria');
+
+cerrarModalCategoria.addEventListener('click', () => modalCategoria.classList.remove('active'));
+cancelarModalCategoria.addEventListener('click', () => modalCategoria.classList.remove('active'));
+
 async function cargarCategorias() {
     try {
         const res = await fetch(`${URL}/categorias`);
@@ -350,7 +369,7 @@ async function cargarCategorias() {
         tbody.innerHTML = '';
 
         if(data.data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4">No hay categorías registradas</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5">No hay categorías registradas</td></tr>';
             return;
         }
 
@@ -361,6 +380,11 @@ async function cargarCategorias() {
                 <td>${c.nombre}</td>
                 <td>${c.descripcion || 'Sin descripción'}</td>
                 <td>${new Date(c.fecha_registro).toLocaleDateString()}</td>
+                <td>
+                    <button class="btn-edit" onclick="editarCategoria(${c.id}, '${c.nombre}', '${c.descripcion || ''}')">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </td>
             `;
             tbody.appendChild(tr);
         });
@@ -369,32 +393,66 @@ async function cargarCategorias() {
     }
 }
 
-document.getElementById('btnAgregarCategoria').addEventListener('click', async () => {
-    const nombre = prompt('Nombre de la categoría:');
-    if(!nombre) return;
-    const descripcion = prompt('Descripción:');
+document.getElementById('btnAgregarCategoria').addEventListener('click', () => {
+    document.getElementById('modalTituloCategoria').textContent = 'Agregar Categoría';
+    document.getElementById('categoriaId').value = '';
+    document.getElementById('inputNombreCategoria').value = '';
+    document.getElementById('inputDescripcionCategoria').value = '';
+    modalCategoria.classList.add('active');
+});
+
+function editarCategoria(id, nombre, descripcion) {
+    document.getElementById('modalTituloCategoria').textContent = 'Editar Categoría';
+    document.getElementById('categoriaId').value = id;
+    document.getElementById('inputNombreCategoria').value = nombre;
+    document.getElementById('inputDescripcionCategoria').value = descripcion;
+    modalCategoria.classList.add('active');
+}
+
+document.getElementById('guardarCategoria').addEventListener('click', async () => {
+    const id = document.getElementById('categoriaId').value;
+    const nombre = document.getElementById('inputNombreCategoria').value.trim();
+    const descripcion = document.getElementById('inputDescripcionCategoria').value.trim();
+
+    if(!nombre) {
+        mostrarNotificacion('El nombre de la categoría es obligatorio', 'error');
+        return;
+    }
+
+    const metodo = id ? 'PUT' : 'POST';
+    const endpoint = id ? `${URL}/categorias/${id}` : `${URL}/categorias`;
 
     try {
-        const res = await fetch(`${URL}/categorias`, {
-            method: 'POST',
+        const res = await fetch(endpoint, {
+            method: metodo,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nombre, descripcion })
         });
         const data = await res.json();
         if(data.success) {
-            mostrarNotificacion('Categoría creada correctamente');
+            mostrarNotificacion(id ? 'Categoría actualizada correctamente' : 'Categoría creada correctamente');
+            modalCategoria.classList.remove('active');
             cargarCategorias();
         }
     } catch (error) {
         console.log('Hubo un error: ', error);
-        mostrarNotificacion('Hubo un error al crear la categoría', 'error');
+        mostrarNotificacion('Hubo un error al guardar la categoría', 'error');
     }
 });
 
 // VENTAS
 
+// VENTAS
+
 let productosDisponibles = [];
 let carrito = [];
+let metodoPago = 'efectivo';
+
+function seleccionarMetodo(metodo) {
+    metodoPago = metodo;
+    document.getElementById('btnEfectivo').classList.toggle('active', metodo === 'efectivo');
+    document.getElementById('btnTarjeta').classList.toggle('active', metodo === 'tarjeta');
+}
 
 async function cargarVentas() {
     try {
@@ -402,6 +460,9 @@ async function cargarVentas() {
         const data = await res.json();
         productosDisponibles = data.data;
         carrito = [];
+        metodoPago = 'efectivo';
+        document.getElementById('btnEfectivo').classList.add('active');
+        document.getElementById('btnTarjeta').classList.remove('active');
         renderizarGrid(productosDisponibles);
         renderizarCarrito();
 
@@ -541,12 +602,12 @@ document.getElementById('btnRegistrarVenta').addEventListener('click', async () 
         const res = await fetch(`${URL}/ventas`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productos })
+            body: JSON.stringify({ productos, metodoPago })
         });
         const data = await res.json();
 
         if(data.success) {
-            mostrarNotificacion(`Venta registrada! Total: $${data.total}`);
+            mostrarNotificacion(`Venta registrada! Total: $${data.total} | ${metodoPago === 'efectivo' ? '💵 Efectivo' : '💳 Tarjeta'}`);
             carrito = [];
             await cargarVentas();
             cargarDashboard();
@@ -559,26 +620,41 @@ document.getElementById('btnRegistrarVenta').addEventListener('click', async () 
 
 // HISTORIAL POR DÍA
 
+// HISTORIAL POR DÍA
+
+let offsetSemana = 0;
+
+function calcularSemana(offset) {
+    const hoy = new Date();
+    const diaSemana = hoy.getDay();
+    const diasDesdeJueves = (diaSemana + 3) % 7;
+
+    const inicioSemana = new Date(hoy);
+    inicioSemana.setDate(hoy.getDate() - diasDesdeJueves + (offset * 7));
+    inicioSemana.setHours(0, 0, 0, 0);
+
+    const finSemana = new Date(inicioSemana);
+    finSemana.setDate(inicioSemana.getDate() + 6);
+    finSemana.setHours(23, 59, 59, 999);
+
+    return { inicioSemana, finSemana };
+}
+
 async function cargarHistorial() {
     try {
         const res = await fetch(`${URL}/ventas`);
         const data = await res.json();
         const ventas = data.data;
 
-        const hoy = new Date();
-        const diaSemana = hoy.getDay();
-        const diasDesdeJueves = (diaSemana + 3) % 7;
-        const inicioSemana = new Date(hoy);
-        inicioSemana.setDate(hoy.getDate() - diasDesdeJueves);
-        inicioSemana.setHours(0, 0, 0, 0);
-
-        const finSemana = new Date(inicioSemana);
-        finSemana.setDate(inicioSemana.getDate() + 6);
-        finSemana.setHours(23, 59, 59, 999);
+        const { inicioSemana, finSemana } = calcularSemana(offsetSemana);
 
         const opciones = { day: 'numeric', month: 'long' };
         document.getElementById('semanaActual').textContent =
-            `Semana: ${inicioSemana.toLocaleDateString('es-MX', opciones)} - ${finSemana.toLocaleDateString('es-MX', opciones)}`;
+            `${inicioSemana.toLocaleDateString('es-MX', opciones)} - ${finSemana.toLocaleDateString('es-MX', opciones)}`;
+
+        // Deshabilitar botón siguiente si estamos en la semana actual
+        document.getElementById('btnSemanaSiguiente').disabled = offsetSemana >= 0;
+        document.getElementById('btnSemanaSiguiente').style.opacity = offsetSemana >= 0 ? '0.4' : '1';
 
         const ventasPorDia = {};
 
@@ -599,6 +675,7 @@ async function cargarHistorial() {
                     ventasPorDia[diaKey].ventas[v.id] = {
                         id: v.id,
                         total: parseFloat(v.total),
+                        metodoPago: v.metodo_pago,
                         productos: []
                     };
                     ventasPorDia[diaKey].totalDia += parseFloat(v.total);
@@ -630,7 +707,7 @@ async function cargarHistorial() {
             const ventasHTML = Object.values(info.ventas).map(v => `
                 <div class="venta-row">
                     <div class="venta-row-info">
-                        <span class="venta-row-titulo">Venta #${v.id}</span>
+                        <span class="venta-row-titulo">Venta #${v.id} · ${v.metodoPago === 'tarjeta' ? '💳 Tarjeta' : '💵 Efectivo'}</span>
                         <span class="venta-row-detalle">${v.productos.join(' | ')}</span>
                     </div>
                     <span class="venta-row-precio">$${v.total.toFixed(2)}</span>
@@ -661,6 +738,17 @@ async function cargarHistorial() {
         console.log('Hubo un error: ', error);
     }
 }
+
+document.getElementById('btnSemanaAnterior').addEventListener('click', () => {
+    offsetSemana--;
+    cargarHistorial();
+});
+
+document.getElementById('btnSemanaSiguiente').addEventListener('click', () => {
+    if(offsetSemana >= 0) return;
+    offsetSemana++;
+    cargarHistorial();
+});
 
 // INICIALIZAR
 

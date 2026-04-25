@@ -53,10 +53,11 @@
             </div>
         </div>
     </div>
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h2><i class="fa-solid fa-star"></i>MAGIC STAR</h2>
+            <h2><i class="fa-solid fa-star"></i> MAGIC STAR</h2>
             <p>Lo mejor para tu telefono</p>
         </div>
         <nav class="sidebar-nav">
@@ -159,6 +160,7 @@
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Fecha Registro</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tablaCategorias"></tbody>
@@ -186,6 +188,15 @@
                             <span>Total:</span>
                             <span id="totalVenta">$0.00</span>
                         </div>
+                        <!-- Método de pago -->
+                        <div class="metodo-pago">
+                            <button class="btn-metodo active" id="btnEfectivo" onclick="seleccionarMetodo('efectivo')">
+                                <i class="fa-solid fa-money-bill"></i> Efectivo
+                            </button>
+                            <button class="btn-metodo" id="btnTarjeta" onclick="seleccionarMetodo('tarjeta')">
+                                <i class="fa-solid fa-credit-card"></i> Tarjeta
+                            </button>
+                        </div>
                         <button class="btn-primary" id="btnRegistrarVenta">
                             <i class="fa-solid fa-check"></i> Registrar Venta
                         </button>
@@ -199,14 +210,20 @@
         <section id="historial" class="page">
             <h1 class="page-title">Historial de Ventas</h1>
             <div class="semana-info">
+                <button class="btn-semana" id="btnSemanaAnterior">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
                 <span id="semanaActual"></span>
+                <button class="btn-semana" id="btnSemanaSiguiente">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
                 <span class="total-semana">Total semana: <strong id="totalSemana">$0.00</strong></span>
             </div>
             <div id="historialPorDia"></div>
         </section>
 
     </main>
-    
+
     <!-- FOOTER -->
     <footer class="footer">
         <p>© 2026 Magic Cell · Desarrollado por Jesús Corona</p>
@@ -221,6 +238,31 @@
             <div class="confirmacion-botones">
                 <button class="btn-secondary" id="confirmacionCancelar">Cancelar</button>
                 <button class="btn-danger" id="confirmacionAceptar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AGREGAR/EDITAR CATEGORÍA -->
+    <div id="modalCategoria" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTituloCategoria">Agregar Categoría</h2>
+                <span class="modal-close" id="cerrarModalCategoria">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="categoriaId">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="inputNombreCategoria" placeholder="Nombre de la categoría">
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <input type="text" id="inputDescripcionCategoria" placeholder="Descripción">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelarModalCategoria">Cancelar</button>
+                <button class="btn-primary" id="guardarCategoria">Guardar</button>
             </div>
         </div>
     </div>

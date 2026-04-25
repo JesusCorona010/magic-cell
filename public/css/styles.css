@@ -26,9 +26,7 @@ body {
     min-height: 100vh;
 }
 
-/* ==========================================
-   SIDEBAR
-   ========================================== */
+/* SIDEBAR */
 .sidebar {
     width: 240px;
     min-height: 100vh;
@@ -85,9 +83,7 @@ body {
     border-left: 4px solid var(--white);
 }
 
-/* ==========================================
-   CONTENIDO PRINCIPAL
-   ========================================== */
+/* CONTENIDO PRINCIPAL */
 .main-content {
     margin-left: 240px;
     padding: 30px;
@@ -110,9 +106,7 @@ body {
     border-bottom: 2px solid var(--light);
 }
 
-/* ==========================================
-   TARJETAS DASHBOARD
-   ========================================== */
+/* TARJETAS DASHBOARD */
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -154,9 +148,7 @@ body {
     color: var(--text-dark);
 }
 
-/* ==========================================
-   HISTORIAL DE VENTAS
-   ========================================== */
+/* HISTORIAL DE VENTAS */
 .historial {
     background-color: var(--white);
     border-radius: 12px;
@@ -205,9 +197,7 @@ body {
     color: var(--text-light);
 }
 
-/* ==========================================
-   TABLA
-   ========================================== */
+/* TABLA */
 .tabla {
     width: 100%;
     border-collapse: collapse;
@@ -243,9 +233,7 @@ body {
     border-bottom: none;
 }
 
-/* ==========================================
-   BOTONES
-   ========================================== */
+/* BOTONES */
 .btn-primary {
     background-color: var(--primary);
     color: var(--white);
@@ -313,9 +301,7 @@ body {
     opacity: 0.85;
 }
 
-/* ==========================================
-   VENTAS
-   ========================================== */
+/* VENTAS */
 .venta-total {
     margin: 20px 0;
     font-size: 1.3rem;
@@ -351,9 +337,7 @@ body {
 }
 
 
-/* ==========================================
-   MODAL
-   ========================================== */
+/* MODAL */
 .modal {
     display: none;
     position: fixed;
@@ -447,9 +431,7 @@ body {
     overflow-y: auto;
 }
 
-/* ==========================================
-   HISTORIAL POR DÍA
-   ========================================== */
+/* HISTORIAL POR DÍA */
 .semana-info {
     display: flex;
     justify-content: space-between;
@@ -559,9 +541,7 @@ body {
     color: var(--primary);
 }
 
-/* ==========================================
-   NOTIFICACIONES
-   ========================================== */
+/* NOTIFICACIONES */
 .notificacion {
     position: fixed;
     top: 20px;
@@ -597,9 +577,7 @@ body {
     to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ==========================================
-   MODAL DE CONFIRMACIÓN
-   ========================================== */
+/* MODAL DE CONFIRMACIÓN */
 .modal-confirmacion {
     display: none;
     position: fixed;
@@ -649,9 +627,7 @@ body {
     justify-content: center;
 }
 
-/* ==========================================
-   VENTAS - PUNTO DE VENTA
-   ========================================== */
+/* VENTAS - PUNTO DE VENTA */
 .ventas-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -742,9 +718,7 @@ body {
     font-weight: 600;
 }
 
-/* ==========================================
-   CARRITO
-   ========================================== */
+/* CARRITO */
 .ventas-carrito {
     background-color: var(--white);
     border-radius: 12px;
@@ -874,4 +848,181 @@ body {
     font-size: 0.75rem;
     color: var(--text-light);
     border-top: 1px solid var(--light);
+}
+
+/* MÉTODO DE PAGO */
+.metodo-pago {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-metodo {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--light);
+    border-radius: 8px;
+    background-color: var(--white);
+    color: var(--text-dark);
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-metodo.active {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.btn-metodo:hover {
+    border-color: var(--primary);
+}
+
+.btn-semana {
+    background: none;
+    border: 2px solid var(--light);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: var(--primary);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.btn-semana:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+/* RESPONSIVE MÓVIL */
+@media (max-width: 768px) {
+
+    /* SIDEBAR → se convierte en barra inferior */
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        flex-direction: row;
+        z-index: 100;
+        padding: 0;
+    }
+
+    .sidebar-header {
+        display: none;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        width: 100%;
+        padding: 0;
+        justify-content: space-around;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        font-size: 0.7rem;
+        padding: 8px 5px;
+        gap: 4px;
+        flex: 1;
+        text-align: center;
+        border-left: none;
+        border-top: 3px solid transparent;
+    }
+
+    .nav-item.active {
+        border-left: none;
+        border-top: 3px solid var(--white);
+    }
+
+    .nav-item i {
+        font-size: 1.2rem;
+    }
+
+    /* CONTENIDO PRINCIPAL */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+        padding-bottom: 80px;
+    }
+
+    /* FOOTER */
+    .footer {
+        display: none;
+    }
+
+    /* TARJETAS DASHBOARD */
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .card i {
+        font-size: 1.3rem;
+        padding: 8px;
+    }
+
+    .card-value {
+        font-size: 1.1rem;
+    }
+
+    /* TABLAS */
+    .tabla {
+        display: block;
+        overflow-x: auto;
+    }
+
+    /* VENTAS - PUNTO DE VENTA */
+    .ventas-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .ventas-productos {
+        height: 350px;
+    }
+
+    .ventas-carrito {
+        height: auto;
+    }
+
+    /* MODAL */
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+
+    /* SEMANA INFO */
+    .semana-info {
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 0.8rem;
+    }
+
+    /* HISTORIAL */
+    .dia-header h3 {
+        font-size: 0.85rem;
+    }
+
+    /* MÉTODO DE PAGO */
+    .metodo-pago {
+        flex-direction: row;
+    }
+
+    /* CONFIRMACIÓN */
+    .confirmacion-content {
+        width: 90%;
+    }
 }

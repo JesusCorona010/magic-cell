@@ -54,6 +54,40 @@ app.post('/categorias', async (req, res) => {
     }
 });
 
+// Actualizar categoría
+app.put('/categorias/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, descripcion } = req.body;
+
+        const [existe] = await pool.query('SELECT id FROM categorias WHERE id = ?', [id]);
+
+        if(existe.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Categoría no encontrada'
+            });
+        }
+
+        await pool.query(
+            'UPDATE categorias SET nombre = ?, descripcion = ? WHERE id = ?',
+            [nombre, descripcion, id]
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Categoría actualizada correctamente'
+        });
+
+    } catch (error) {
+        console.log('Hubo un error: ', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Hubo un error'
+        });
+    }
+});
+
 // PRODUCTOS
 // Obtener todos los productos
 app.get('/productos', async (req, res) => {
@@ -213,15 +247,15 @@ app.delete('/productos/:id', async (req, res) => {
 app.post('/ventas', async (req, res) => {
     const con = await pool.getConnection();
     try {
-        const { productos } = req.body;
+        const { productos, metodoPago } = req.body;
 
         await con.beginTransaction();
 
         const total = productos.reduce((acc, p) => acc + (p.cantidad * p.precioUnitario), 0);
 
         const [venta] = await con.query(
-            'INSERT INTO ventas(total) VALUES(?)',
-            [total]
+            'INSERT INTO ventas(total, metodo_pago) VALUES(?, ?)',
+            [total, metodoPago]
         );
 
         for(const p of productos) {
@@ -262,7 +296,7 @@ app.post('/ventas', async (req, res) => {
 app.get('/ventas', async (req, res) => {
     try {
         const sql = `
-            SELECT v.id, v.total, v.fecha_venta,
+            SELECT v.id, v.total, v.fecha_venta, v.metodo_pago,
                    dv.cantidad, dv.precio_unitario, dv.subtotal,
                    p.nombre AS producto
             FROM ventas v
