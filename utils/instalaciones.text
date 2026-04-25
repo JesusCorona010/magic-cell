@@ -1,3 +1,7 @@
 npm install express cors mysql2 dotenv
 
 npm install -g nodemon
+
+
+Agregar metodo de pago en la parte de ventas
+Editor de categorias
