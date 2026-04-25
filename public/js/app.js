@@ -30,7 +30,7 @@ navItems.forEach(item => {
 
 // URL BASE
 
-const URL = 'http://localhost:3000';
+const URL = 'https://magic-cell-production.up.railway.app';
 
 // NOTIFICACIONES
 
