@@ -3,12 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario - Magic Cell</title>
+    <title>Inventario - Magic Star</title>
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#1E3A5F">
+    <link rel="icon" href="./icons/icon-192.png">
+    <link rel="apple-touch-icon" href="./icons/icon-192.png">
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
+    <!-- PANTALLA SPLASH -->
+    <div id="splash" class="splash">
+        <div class="splash-logo">
+            <i class="fa-solid fa-star splash-estrella"></i>
+            <h1>MAGIC STAR</h1>
+            <p>Lo mejor para tu teléfono</p>
+        </div>
+        <div class="splash-loader"></div>
+    </div>
+
     <!-- MODAL AGREGAR/EDITAR PRODUCTO -->
     <div id="modalProducto" class="modal">
         <div class="modal-content">

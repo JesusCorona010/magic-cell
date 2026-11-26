@@ -30,7 +30,7 @@ navItems.forEach(item => {
 
 // URL BASE
 
-const URL = 'https://magic-cell-production.up.railway.app';
+const URL = ''; // mismo servidor (local o nube)
 
 // NOTIFICACIONES
 
@@ -609,6 +609,7 @@ document.getElementById('btnRegistrarVenta').addEventListener('click', async () 
         if(data.success) {
             mostrarNotificacion(`Venta registrada! Total: $${data.total} | ${metodoPago === 'efectivo' ? '💵 Efectivo' : '💳 Tarjeta'}`);
             carrito = [];
+            window.open(`${URL}/ventas/${data.id}/ticket`, '_blank');
             await cargarVentas();
             cargarDashboard();
         }
@@ -711,6 +712,9 @@ async function cargarHistorial() {
                         <span class="venta-row-detalle">${v.productos.join(' | ')}</span>
                     </div>
                     <span class="venta-row-precio">$${v.total.toFixed(2)}</span>
+                    <a class="btn-ticket" href="${URL}/ventas/${v.id}/ticket" target="_blank" title="Ver ticket">
+                        <i class="fa-solid fa-receipt"></i>
+                    </a>
                 </div>
             `).join('');
 
@@ -754,3 +758,17 @@ document.getElementById('btnSemanaSiguiente').addEventListener('click', () => {
 
 verificarStockBajo();
 cargarDashboard();
+
+// PANTALLA SPLASH
+// Se muestra mínimo 1.5 segundos y se oculta cuando la app terminó de cargar
+const inicioSplash = Date.now();
+
+window.addEventListener('load', () => {
+    const tiempoRestante = Math.max(0, 1500 - (Date.now() - inicioSplash));
+
+    setTimeout(() => {
+        const splash = document.getElementById('splash');
+        splash.classList.add('oculto');
+        splash.addEventListener('transitionend', () => splash.remove());
+    }, tiempoRestante);
+});

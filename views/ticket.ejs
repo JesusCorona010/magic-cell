@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket #<%= venta.id %> - Magic Star</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #F1F5F9;
+            display: flex;
+            justify-content: center;
+            padding: 30px 10px;
+        }
+
+        .ticket {
+            background: #FFFFFF;
+            width: 100%;
+            max-width: 340px;
+            padding: 24px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            color: #1E293B;
+        }
+
+        .centro { text-align: center; }
+        .logo { font-size: 22px; font-weight: bold; color: #1E3A5F; }
+        .sub { font-size: 12px; color: #64748B; margin-bottom: 12px; }
+        .linea { border-top: 1px dashed #94A3B8; margin: 12px 0; }
+        .fila { display: flex; justify-content: space-between; font-size: 13px; margin: 4px 0; }
+        .producto { font-size: 13px; margin-top: 8px; }
+        .detalle { display: flex; justify-content: space-between; font-size: 12px; color: #64748B; }
+        .total { font-size: 18px; font-weight: bold; color: #1E3A5F; }
+        .gracias { font-size: 12px; margin-top: 16px; color: #64748B; }
+
+        .btn-imprimir {
+            display: block;
+            width: 100%;
+            margin-top: 18px;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #1E3A5F;
+            color: #FFFFFF;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        @media print {
+            body { background: #FFFFFF; padding: 0; }
+            .ticket { box-shadow: none; }
+            .btn-imprimir { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="centro">
+            <div class="logo">★ MAGIC STAR</div>
+            <div class="sub">Lo mejor para tu teléfono</div>
+        </div>
+
+        <div class="fila"><span>Ticket:</span><span>#<%= venta.id %></span></div>
+        <div class="fila"><span>Fecha:</span><span><%= fecha %></span></div>
+        <div class="fila">
+            <span>Pago:</span>
+            <span><%= venta.metodo_pago === 'tarjeta' ? 'Tarjeta' : 'Efectivo' %></span>
+        </div>
+
+        <div class="linea"></div>
+
+        <% detalle.forEach(d => { %>
+            <div class="producto"><%= d.producto %></div>
+            <div class="detalle">
+                <span><%= d.cantidad %> x $<%= Number(d.precio_unitario).toFixed(2) %></span>
+                <span>$<%= Number(d.subtotal).toFixed(2) %></span>
+            </div>
+        <% }) %>
+
+        <div class="linea"></div>
+
+        <div class="fila"><span>Artículos:</span><span><%= totalArticulos %></span></div>
+        <div class="fila total"><span>TOTAL</span><span>$<%= Number(venta.total).toFixed(2) %></span></div>
+
+        <div class="linea"></div>
+
+        <p class="centro gracias">¡Gracias por su compra!</p>
+
+        <button class="btn-imprimir" onclick="window.print()">Imprimir ticket</button>
+    </div>
+</body>
+</html>

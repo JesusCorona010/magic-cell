@@ -11,6 +11,10 @@ app.use(express.static(join(__dirname, 'public')));
 app.use(cors());
 app.use(json());
 
+// Motor de vistas para las vistas generadas en el servidor
+app.set('view engine', 'ejs');
+app.set('views', join(__dirname, 'views'));
+
 const PORT = 3000;
 
 // CATEGORÍAS
@@ -317,6 +321,40 @@ app.get('/ventas', async (req, res) => {
             success: false,
             message: 'Hubo un error'
         });
+    }
+});
+
+// TICKET DE VENTA (vista generada en el servidor)
+app.get('/ventas/:id/ticket', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const [ventas] = await pool.query('SELECT * FROM ventas WHERE id = ?', [id]);
+
+        if(ventas.length === 0) {
+            return res.status(404).send('<h2>Venta no encontrada</h2>');
+        }
+
+        const sql = `
+            SELECT dv.cantidad, dv.precio_unitario, dv.subtotal,
+                   COALESCE(p.nombre, 'Producto eliminado') AS producto
+            FROM detalle_ventas dv
+            LEFT JOIN productos p ON dv.id_producto = p.id
+            WHERE dv.id_venta = ?
+        `;
+        const [detalle] = await pool.query(sql, [id]);
+
+        const venta = ventas[0];
+        const totalArticulos = detalle.reduce((acc, d) => acc + d.cantidad, 0);
+        const fecha = new Date(venta.fecha_venta).toLocaleString('es-MX', {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+        });
+
+        return res.render('ticket', { venta, detalle, totalArticulos, fecha });
+    } catch (error) {
+        console.log('Hubo un error: ', error);
+        return res.status(500).send('<h2>Hubo un error al generar el ticket</h2>');
     }
 });
 

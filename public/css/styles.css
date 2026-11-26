@@ -1,12 +1,12 @@
 /*VARIABLES DE COLOR*/
 :root {
-    --primary: #B03060;
-    --secondary: #D4605A;
-    --light: #E8C8CC;
-    --background: #F0EEEE;
+    --primary: #1E3A5F;
+    --secondary: #0EA5E9;
+    --light: #CBD5E1;
+    --background: #F1F5F9;
     --white: #FFFFFF;
-    --text-dark: #2d2d2d;
-    --text-light: #666666;
+    --text-dark: #1E293B;
+    --text-light: #64748B;
     --danger: #e74c3c;
     --success: #2ecc71;
 }
@@ -1025,4 +1025,84 @@ body {
     .confirmacion-content {
         width: 90%;
     }
+}
+/* BOTÓN TICKET EN HISTORIAL */
+.btn-ticket {
+    margin-left: 12px;
+    color: var(--primary);
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.btn-ticket:hover {
+    color: var(--secondary);
+}
+
+/* PANTALLA SPLASH */
+.splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: linear-gradient(160deg, var(--primary), #0F1F33);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.splash.oculto {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.splash-logo {
+    text-align: center;
+    color: var(--white);
+    animation: aparecer 0.8s ease-out;
+}
+
+.splash-estrella {
+    font-size: 5rem;
+    margin-bottom: 18px;
+    animation: brillar 1.6s ease-in-out infinite;
+}
+
+.splash-logo h1 {
+    font-size: 2.4rem;
+    letter-spacing: 3px;
+}
+
+.splash-logo p {
+    color: var(--light);
+    margin-top: 6px;
+}
+
+.splash-loader {
+    width: 42px;
+    height: 42px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: var(--secondary);
+    border-radius: 50%;
+    animation: girar 0.9s linear infinite;
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(20px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes brillar {
+    0%, 100% { transform: scale(1) rotate(0deg); text-shadow: 0 0 0 transparent; }
+    50%      { transform: scale(1.12) rotate(10deg); text-shadow: 0 0 25px var(--secondary); }
+}
+
+@keyframes girar {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+    .splash-estrella { font-size: 4rem; }
+    .splash-logo h1 { font-size: 1.8rem; }
 }
